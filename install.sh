@@ -7,6 +7,7 @@ SCRIPT="$DIR/internet-checker.py"
 #python3 "SCRIPT" $@
 
 echo "#!/bin/bash
-
 python3 $SCRIPT \$@
-" > icheck
+" > /bin/icheck
+
+chmod 777 /bin/icheck

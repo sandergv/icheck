@@ -223,12 +223,13 @@ def check() -> None:
 
 if __name__ == "__main__":
 
+    opt = None
+
     try:
         opt = ARGS.pop(0)
     except IndexError:
         pass
 
-    
     if opt == 'init':
 
         time = DEFAULT_TIME
