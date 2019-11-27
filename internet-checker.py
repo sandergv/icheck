@@ -3,7 +3,6 @@ import sys
 import tempfile
 import json
 
-from subprocess import run, Popen, PIPE
 import datetime
 
 
@@ -59,6 +58,9 @@ def get_arg(arg) -> str:
 
 
 def _get_cronjobs() -> list:
+
+    from subprocess import Popen, PIPE
+
     
     process = Popen(['crontab', '-u', USER, '-l'], stdout=PIPE, stderr=PIPE)
     lines = process.stdout.readlines()
@@ -98,6 +100,8 @@ def remove_job() -> None:
 
 
 def _write_jobs(jobs_list) -> None:
+
+    from subprocess import run
     
     f, fp = tempfile.mkstemp()
 
@@ -189,11 +193,20 @@ def init(time) -> None:
     write_json(DATA_FILE, data_file)
 
 
-def show_events() -> None:
-    
+def show_events(opt) -> None:
     data_file = read_json(DATA_FILE)
+    
+    if opt == 'last':
+        last_event = data_file['last_event']
 
-    print(data_file)
+        print(
+            f"Fecha:\t{last_event['date']}\n"
+            f"Hora:\t{last_event['time']}\n"
+            f"Estado:\t{last_event['state']}\n"
+        )
+
+    else:
+        print(data_file)
 
 
 def check() -> None:
@@ -240,10 +253,20 @@ if __name__ == "__main__":
         init(time=time)
 
     elif opt == 'events':
-        show_events()
+
+        if '-l' in ARGS:
+            show_events('last')
 
     elif opt == 'check':
         check()
+
+    elif opt == 'cron':
+        
+        if '-u' in ARGS:
+            t = get_arg('-u')
+            set_job(t)
+        if '-r' in ARGS:
+            remove_job()
 
     else:
         print(f'"{opt}" No es una opción valida.')
